@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Top 100 Winning Multipliers</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<style>
+:root { --bg:#0b1220; --card:#111a2b; --muted:#7f8ea3; --text:#eaf0ff; }
+body { margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text);}
+header {text-align:center; padding:24px;}
+h1 {margin:0; font-size:28px;}
+.timer {color:#9ac7ff; font-size:14px; margin-top:8px;}
+table {width:100%; max-width:900px; margin:24px auto; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden;}
+th,td {padding:12px 10px; border-bottom:1px solid #1f2b44; font-size:14px;}
+th {text-align:left; color:#b8c3d6;}
+tr:hover td {background:#0e1a31;}
+.right {text-align:right;}
+.mono {font-variant-numeric:tabular-nums; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+footer {color:var(--muted); text-align:center; margin:16px; font-size:12px;}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏆 Top 100 Winning Multipliers</h1>
+  <div class="timer" id="timer">Next refresh in: ...</div>
+</header>
+
+<table id="tbl">
+<thead>
+<tr>
+  <th>Player</th>
+  <th class="right">Bet</th>
+  <th class="right">Paid</th>
+  <th class="right">Multiplier</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<footer>Auto-updates every 5 minutes</footer>
+
+<script>
+const API_URL = "REPLACE_WITH_RENDER_URL/api/leaderboard"; // ← update in step 4
+let nextRefresh=null, timerInt;
+
+function fmt(n){return new Intl.NumberFormat(undefined,{maximumFractionDigits:2}).format(n);}
+
+async function load(){
+  const res=await fetch(API_URL);
+  const json=await res.json();
+  const rows=json.data||[];
+  nextRefresh=json.next_refresh;
+  const tb=document.querySelector("#tbl tbody");
+  tb.innerHTML="";
+  rows.forEach(r=>{
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td class="mono">${r.player_id||""}</td>
+      <td class="right mono">${r.bet_amount?fmt(r.bet_amount):""}</td>
+      <td class="right mono">${r.paid_amount?fmt(r.paid_amount):""}</td>
+      <td class="right mono">${r.multiplier?fmt(r.multiplier):""}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function updateTimer(){
+  const el=document.getElementById("timer");
+  if(!nextRefresh)return;
+  const diff=Math.max(0,nextRefresh-Date.now());
+  const s=Math.floor(diff/1000);
+  el.textContent=`Next refresh in: ${s}s`;
+  if(s<=1)load();
+}
+
+async function init(){ await load(); setInterval(updateTimer,1000); }
+init();
+</script>
+</body>
+</html>

@@ -21,7 +21,7 @@ footer {color:var(--muted); text-align:center; margin:16px; font-size:12px;}
 </head>
 <body>
 <header>
-  <h1>🏆 Top 100 Winning Multipliers</h1>
+  <h1>Top 100 Winning Multipliers</h1>
   <div class="timer" id="timer">Next refresh in: ...</div>
 </header>
 
@@ -40,7 +40,7 @@ footer {color:var(--muted); text-align:center; margin:16px; font-size:12px;}
 <footer>Auto-updates every 5 minutes</footer>
 
 <script>
-const API_URL = "REPLACE_WITH_RENDER_URL/api/leaderboard"; // ← update in step 4
+const API_URL = "https://leaderboardarada.onrender.com/api/leaderboard";
 let nextRefresh=null, timerInt;
 
 function fmt(n){return new Intl.NumberFormat(undefined,{maximumFractionDigits:2}).format(n);}
@@ -77,3 +77,4 @@ init();
 </script>
 </body>
 </html>
+
